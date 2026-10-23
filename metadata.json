@@ -1,0 +1,7 @@
+{
+  "name": "AIDA — Artificial Intelligence Digital Academy",
+  "description": "Professional educational academy website for Artificial Intelligence, AI tools, AI agents, automation, and practical digital skills.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

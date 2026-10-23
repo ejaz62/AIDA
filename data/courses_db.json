@@ -1,0 +1,266 @@
+[
+  {
+    "id": "ai-fundamentals-for-beginners",
+    "number": "01",
+    "title": "AI Fundamentals for Beginners",
+    "shortDescription": "A structured, jargon-free introduction to modern Artificial Intelligence, large language models, prompt engineering, and everyday digital productivity.",
+    "fullDescription": "Designed specifically for learners with zero computer science background. Understand how modern AI models think, formulate effective prompts, avoid common pitfalls like hallucinations, and integrate accessible AI tools into your daily academic or business workflow.",
+    "status": "Coming Soon",
+    "isPublished": true,
+    "price": "Curriculum Proposed",
+    "thumbnail": "",
+    "level": "Beginner",
+    "category": "Fundamentals",
+    "durationEstimate": "4–6 Weeks (Self-paced or Cohort)",
+    "keyOutcomes": [
+      "Grasp foundational concepts of LLMs, neural networks, and generative AI",
+      "Master prompt crafting frameworks for consistent, accurate outputs",
+      "Select the right AI tool for text synthesis, research, and analysis",
+      "Apply responsible AI ethics, data privacy, and verification routines"
+    ],
+    "syllabus": [
+      {
+        "moduleNumber": "01",
+        "title": "Core Concepts & Modern AI Landscape",
+        "summary": "How generative models work, understanding tokens, context windows, and model types."
+      },
+      {
+        "moduleNumber": "02",
+        "title": "Systematic Prompt Engineering",
+        "summary": "Role-based prompts, few-shot examples, multi-turn reasoning, and output structuring."
+      },
+      {
+        "moduleNumber": "03",
+        "title": "Essential AI Tool Suite",
+        "summary": "Hands-on practice with leading text, vision, and productivity tools."
+      },
+      {
+        "moduleNumber": "04",
+        "title": "Responsible AI & Quality Verification",
+        "summary": "Detecting hallucinations, ethical guidelines, data safety, and fact-checking protocols."
+      }
+    ],
+    "createdAt": "2026-10-23T09:27:13.063Z",
+    "updatedAt": "2026-10-23T09:27:13.063Z"
+  },
+  {
+    "id": "claude-ai-and-productivity",
+    "number": "02",
+    "title": "Claude AI and AI Productivity",
+    "shortDescription": "Harness Claude’s deep reasoning, long context window, and writing nuances to accelerate research, document analysis, and executive workflow speed.",
+    "fullDescription": "Explore the architectural strengths of Anthropic Claude. Learn to analyze long reports (200k+ tokens), extract structured JSON/tables from messy documents, draft executive communications, and structure complex multi-step reasoning tasks.",
+    "status": "Coming Soon",
+    "isPublished": true,
+    "price": "Curriculum Proposed",
+    "thumbnail": "",
+    "level": "Beginner to Intermediate",
+    "category": "Productivity & Code",
+    "durationEstimate": "4 Weeks",
+    "keyOutcomes": [
+      "Leverage massive context windows for comprehensive file and document synthesis",
+      "Master Claude Projects, custom project instructions, and knowledge bases",
+      "Extract structured data (tables, CSV, JSON) from complex PDFs and transcripts",
+      "Design reliable multi-step research and briefing workflows"
+    ],
+    "syllabus": [
+      {
+        "moduleNumber": "01",
+        "title": "Claude Architecture & Context Mastery",
+        "summary": "Understanding context retention, Artifacts, and conversational memory."
+      },
+      {
+        "moduleNumber": "02",
+        "title": "Knowledge Bases & Claude Projects",
+        "summary": "Organizing domain documents, defining project instructions, and workflow templates."
+      },
+      {
+        "moduleNumber": "03",
+        "title": "Advanced Analytical & Writing Workflows",
+        "summary": "Executive briefs, research papers, contract summaries, and competitive audits."
+      },
+      {
+        "moduleNumber": "04",
+        "title": "Prompt Optimization & XML Tagging",
+        "summary": "Using XML tags, thinking tags, and structured guidelines for deterministic reasoning."
+      }
+    ],
+    "createdAt": "2026-10-23T09:27:13.063Z",
+    "updatedAt": "2026-10-23T09:27:13.063Z"
+  },
+  {
+    "id": "claude-code-assisted-development",
+    "number": "03",
+    "title": "Claude Code and AI-Assisted Development",
+    "shortDescription": "Learn how to leverage Claude Code, terminal-based AI tools, and smart code generation to build web applications, scripts, and software prototypes.",
+    "fullDescription": "Bridge the gap between ideas and functional software. Learn how terminal-driven AI tools like Claude Code inspect repositories, edit multi-file codebases, execute unit tests, and help junior developers or career switchers ship production-grade code with confidence.",
+    "status": "Coming Soon",
+    "isPublished": true,
+    "price": "Curriculum Proposed",
+    "thumbnail": "",
+    "level": "Beginner to Intermediate",
+    "category": "Productivity & Code",
+    "durationEstimate": "6 Weeks",
+    "keyOutcomes": [
+      "Install and operate terminal-based AI development assistants safely",
+      "Understand project architectures, repo navigation, and automated git commits",
+      "Debug runtime errors, lint failures, and refactor legacy code using AI pair-programming",
+      "Build and deploy responsive modern web interfaces from scratch"
+    ],
+    "syllabus": [
+      {
+        "moduleNumber": "01",
+        "title": "Terminal Fundamentals & AI CLI Setup",
+        "summary": "Setting up the environment, CLI essentials, safety boundaries, and workspace permissions."
+      },
+      {
+        "moduleNumber": "02",
+        "title": "Repo Navigation & Multi-File Architecture",
+        "summary": "Instructing AI agents to read file trees, plan changes, and execute precise refactors."
+      },
+      {
+        "moduleNumber": "03",
+        "title": "Building Interactive Web Applications",
+        "summary": "Creating TypeScript, React, and API integrations with real-time feedback loops."
+      },
+      {
+        "moduleNumber": "04",
+        "title": "Testing, Debugging, and Safe Version Control",
+        "summary": "Writing tests, interpreting stack traces, creating git pull requests, and automated deployment."
+      }
+    ],
+    "createdAt": "2026-10-23T09:27:13.063Z",
+    "updatedAt": "2026-10-23T09:27:13.063Z"
+  },
+  {
+    "id": "ai-agents-and-intelligent-assistants",
+    "number": "04",
+    "title": "AI Agents and Intelligent Assistants",
+    "shortDescription": "Move beyond simple chatbots to autonomous AI agents capable of planning, using tools, searching the web, executing tasks, and handling memory.",
+    "fullDescription": "Dive into the next frontier of artificial intelligence. Master agentic loops, task decomposition, external tool invocation, memory architectures, and human-in-the-loop oversight to create reliable digital assistants that perform real work.",
+    "status": "In Development",
+    "isPublished": true,
+    "price": "Curriculum Proposed",
+    "thumbnail": "",
+    "level": "Intermediate to Advanced",
+    "category": "Agents & Automation",
+    "durationEstimate": "6–8 Weeks",
+    "keyOutcomes": [
+      "Understand ReAct (Reason + Act) patterns and autonomous execution loops",
+      "Equip AI agents with custom tools, web search, calculators, and API callers",
+      "Implement structured memory systems and context management strategies",
+      "Design safety guardrails, human validation checkpoints, and failure recovery"
+    ],
+    "syllabus": [
+      {
+        "moduleNumber": "01",
+        "title": "The Agentic Paradigm & Anatomy",
+        "summary": "Sensors, reasoning engines, memory stores, and action actuators."
+      },
+      {
+        "moduleNumber": "02",
+        "title": "Tool Calling & API Integrations",
+        "summary": "Function calling schemas, handling API payloads, and response parsing."
+      },
+      {
+        "moduleNumber": "03",
+        "title": "Multi-Step Planning & Self-Correction",
+        "summary": "Reflective loops, error recovery strategies, and verification steps."
+      },
+      {
+        "moduleNumber": "04",
+        "title": "Human-in-the-Loop & Safety Boundaries",
+        "summary": "Confidence thresholds, confirmation modals, and boundary constraints."
+      }
+    ],
+    "createdAt": "2026-10-23T09:27:13.063Z",
+    "updatedAt": "2026-10-23T09:27:13.063Z"
+  },
+  {
+    "id": "ai-automation-and-business-workflows",
+    "number": "05",
+    "title": "AI Automation and Business Workflows",
+    "shortDescription": "Connect AI intelligence with business apps like email, spreadsheets, CRMs, and messaging channels to streamline client operations and save hundreds of hours.",
+    "fullDescription": "A practical programme focused on commercial business impact. Discover how small businesses, agencies, and freelancers can automate customer inquiry triage, lead nurturing, document parsing, invoice processing, and content workflows using AI integrations.",
+    "status": "In Development",
+    "isPublished": true,
+    "price": "Curriculum Proposed",
+    "thumbnail": "",
+    "level": "Beginner to Intermediate",
+    "category": "Agents & Automation",
+    "durationEstimate": "5 Weeks",
+    "keyOutcomes": [
+      "Map repetitive business processes and identify high-ROI AI automation targets",
+      "Connect LLMs with webhooks, spreadsheets, email triggers, and CRM databases",
+      "Build automated client onboarding, quote generators, and support triage systems",
+      "Package and sell automation solutions as an independent freelancer or agency"
+    ],
+    "syllabus": [
+      {
+        "moduleNumber": "01",
+        "title": "Workflow Auditing & Opportunity Assessment",
+        "summary": "Identifying time sinks, quantifying automation ROI, and business readiness."
+      },
+      {
+        "moduleNumber": "02",
+        "title": "No-Code & Low-Code AI Connectors",
+        "summary": "Connecting webhook triggers, email parsing, Google Sheets, and Slack alerts."
+      },
+      {
+        "moduleNumber": "03",
+        "title": "Document Processing & Data Extraction",
+        "summary": "Extracting structured data from PDF receipts, supplier invoices, and contracts."
+      },
+      {
+        "moduleNumber": "04",
+        "title": "Commercial Freelancing & Client Delivery",
+        "summary": "Scoping automation projects, writing proposals, pricing services, and maintenance contracts."
+      }
+    ],
+    "createdAt": "2026-10-23T09:27:13.063Z",
+    "updatedAt": "2026-10-23T09:27:13.063Z"
+  },
+  {
+    "id": "building-and-deploying-ai-solutions",
+    "number": "06",
+    "title": "Building and Deploying AI Solutions",
+    "shortDescription": "End-to-end engineering: from prototyping an AI application on your laptop to hosting, domain configuration, production security, and client handoff.",
+    "fullDescription": "Take your AI products to the world. Learn full-stack fundamentals, environment variables security, serverless hosting (Vercel, Cloud Run), client rate-limiting, user feedback instrumentation, and ongoing model monitoring.",
+    "status": "Curriculum Proposed",
+    "isPublished": true,
+    "price": "Curriculum Proposed",
+    "thumbnail": "",
+    "level": "Intermediate to Advanced",
+    "category": "Deployment",
+    "durationEstimate": "6 Weeks",
+    "keyOutcomes": [
+      "Build full-stack AI web applications with robust frontend and backend architectures",
+      "Secure API keys, handle CORS, and implement server-side proxy layers safely",
+      "Deploy applications to modern cloud hosting platforms with continuous delivery",
+      "Monitor token usage, latency, and system reliability in production environments"
+    ],
+    "syllabus": [
+      {
+        "moduleNumber": "01",
+        "title": "Full-Stack Architecture for AI Apps",
+        "summary": "Decoupling UI from backend logic, streaming responses, and optimistic updates."
+      },
+      {
+        "moduleNumber": "02",
+        "title": "Security & Secret Management",
+        "summary": "Protecting keys, rate limiting, token budgets, and preventing prompt injection."
+      },
+      {
+        "moduleNumber": "03",
+        "title": "Cloud Deployment & Custom Domains",
+        "summary": "Deploying containers, setting up SSL certificates, DNS routing, and CI/CD."
+      },
+      {
+        "moduleNumber": "04",
+        "title": "Monitoring, Telemetry & Iteration",
+        "summary": "Tracking cost per user, latency monitoring, error handling, and gathering user feedback."
+      }
+    ],
+    "createdAt": "2026-10-23T09:27:13.063Z",
+    "updatedAt": "2026-10-23T09:27:13.063Z"
+  }
+]
