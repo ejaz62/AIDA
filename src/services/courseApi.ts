@@ -47,16 +47,55 @@ export function getStoredAdminUser() {
 }
 
 // ==========================================
+// RESILIENT NETLIFY / FULL-STACK API HELPER
+// ==========================================
+
+async function safeJsonFetch(url: string, options?: RequestInit): Promise<any> {
+  let res = await fetch(url, options);
+  let contentType = res.headers.get('content-type') || '';
+
+  // If the static server returned HTML (Netlify SPA fallback), try direct Netlify function endpoint
+  if (contentType.includes('text/html') && url.startsWith('/api/')) {
+    const netlifyUrl = url.replace('/api/', '/.netlify/functions/api/');
+    try {
+      const netlifyRes = await fetch(netlifyUrl, options);
+      const netlifyContentType = netlifyRes.headers.get('content-type') || '';
+      if (netlifyContentType.includes('application/json')) {
+        res = netlifyRes;
+        contentType = netlifyContentType;
+      }
+    } catch {
+      // Fall through to original response processing
+    }
+  }
+
+  const text = await res.text();
+  let data: any;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    if (text.trim().startsWith('<!DOCTYPE') || contentType.includes('text/html')) {
+      throw new Error(
+        'The API returned an HTML document instead of JSON. Netlify Functions require netlify.toml to route /api/* requests.'
+      );
+    }
+    throw new Error('Failed to parse server response as JSON');
+  }
+
+  if (!res.ok) {
+    throw new Error(data?.error || `Request failed with status ${res.status}`);
+  }
+
+  return data;
+}
+
+// ==========================================
 // PUBLIC API
 // ==========================================
 
 export async function fetchPublishedCourses(): Promise<{ courses: Course[]; isFallback: boolean }> {
   try {
-    const res = await fetch('/api/courses');
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`);
-    }
-    const data = await res.json();
+    const data = await safeJsonFetch('/api/courses');
     if (Array.isArray(data.courses) && data.courses.length > 0) {
       return { courses: data.courses, isFallback: false };
     }
@@ -69,9 +108,7 @@ export async function fetchPublishedCourses(): Promise<{ courses: Course[]; isFa
 
 export async function fetchDatabaseStatus(): Promise<DatabaseStatus | null> {
   try {
-    const res = await fetch('/api/db-status');
-    if (!res.ok) return null;
-    return await res.json();
+    return await safeJsonFetch('/api/db-status');
   } catch (err) {
     console.error('Failed to fetch DB status:', err);
     return null;
@@ -83,16 +120,11 @@ export async function fetchDatabaseStatus(): Promise<DatabaseStatus | null> {
 // ==========================================
 
 export async function loginAdmin(email: string, password: string, rememberMe: boolean = true): Promise<AdminAuthResponse> {
-  const res = await fetch('/api/admin/login', {
+  const data = await safeJsonFetch('/api/admin/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
-
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.error || 'Login failed. Please verify credentials.');
-  }
 
   setStoredAdminAuth(data, rememberMe);
   return data;
@@ -139,14 +171,9 @@ export async function fetchAllAdminCourses(): Promise<Course[]> {
   const token = getStoredAdminToken();
   if (!token) throw new Error('Authentication required');
 
-  const res = await fetch('/api/admin/courses', {
+  const data = await safeJsonFetch('/api/admin/courses', {
     headers: { Authorization: `Bearer ${token}` },
   });
-
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.error || 'Failed to fetch admin courses');
-  }
 
   return data.courses;
 }
@@ -155,7 +182,7 @@ export async function createCourseApi(courseData: Partial<Course>): Promise<Cour
   const token = getStoredAdminToken();
   if (!token) throw new Error('Authentication required');
 
-  const res = await fetch('/api/admin/courses', {
+  const data = await safeJsonFetch('/api/admin/courses', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -164,11 +191,6 @@ export async function createCourseApi(courseData: Partial<Course>): Promise<Cour
     body: JSON.stringify(courseData),
   });
 
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.error || 'Failed to create course');
-  }
-
   return data.course;
 }
 
@@ -176,7 +198,7 @@ export async function updateCourseApi(id: string, courseData: Partial<Course>): 
   const token = getStoredAdminToken();
   if (!token) throw new Error('Authentication required');
 
-  const res = await fetch(`/api/admin/courses/${encodeURIComponent(id)}`, {
+  const data = await safeJsonFetch(`/api/admin/courses/${encodeURIComponent(id)}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -185,11 +207,6 @@ export async function updateCourseApi(id: string, courseData: Partial<Course>): 
     body: JSON.stringify(courseData),
   });
 
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.error || 'Failed to update course');
-  }
-
   return data.course;
 }
 
@@ -197,7 +214,7 @@ export async function toggleCoursePublicationApi(id: string, isPublished?: boole
   const token = getStoredAdminToken();
   if (!token) throw new Error('Authentication required');
 
-  const res = await fetch(`/api/admin/courses/${encodeURIComponent(id)}/publish`, {
+  const data = await safeJsonFetch(`/api/admin/courses/${encodeURIComponent(id)}/publish`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -206,11 +223,6 @@ export async function toggleCoursePublicationApi(id: string, isPublished?: boole
     body: JSON.stringify({ isPublished }),
   });
 
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.error || 'Failed to toggle publication status');
-  }
-
   return data.course;
 }
 
@@ -218,15 +230,11 @@ export async function deleteCourseApi(id: string): Promise<void> {
   const token = getStoredAdminToken();
   if (!token) throw new Error('Authentication required');
 
-  const res = await fetch(`/api/admin/courses/${encodeURIComponent(id)}`, {
+  await safeJsonFetch(`/api/admin/courses/${encodeURIComponent(id)}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.error || 'Failed to delete course');
-  }
 }
+

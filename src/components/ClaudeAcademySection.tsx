@@ -3,6 +3,7 @@ import { CLAUDE_CREDENTIALS_DATA } from '../data/academyData';
 import { ClaudeCredential } from '../types';
 import { CheckCircle2, Award, Terminal, ArrowUpRight, UserCheck } from 'lucide-react';
 import founderImage from '../assets/images/founder_muhammad_ejaz.jpeg';
+import aiAgentsCodeImage from '../assets/images/aida_ai_agents_code_1792526771999.jpg';
 
 interface ClaudeAcademySectionProps {
   onSelectCredential: (credential: ClaudeCredential) => void;
@@ -113,12 +114,18 @@ export const ClaudeAcademySection: React.FC<ClaudeAcademySectionProps> = ({
 
             <div className="lg:col-span-5 border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-950 overflow-hidden">
               <img
-                src="/src/assets/images/aida_ai_agents_code_1792526771999.jpg"
+                src={aiAgentsCodeImage}
                 alt="Technical visual of AI agent execution and code architecture"
                 referrerPolicy="no-referrer"
                 className="w-full max-w-full h-[220px] sm:h-[300px] object-cover"
                 onError={(e) => {
-                  e.currentTarget.style.display = 'none';
+                  const target = e.currentTarget;
+                  if (!target.dataset.triedPublic) {
+                    target.dataset.triedPublic = 'true';
+                    target.src = '/assets/images/aida_ai_agents_code.jpg';
+                  } else {
+                    target.style.display = 'none';
+                  }
                 }}
               />
             </div>

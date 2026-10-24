@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowRight, Sparkles, Terminal, Cpu, Bot, Workflow, Building, Users } from 'lucide-react';
 import { FOUNDER_DATA } from '../data/academyData';
+import heroStudentsImage from '../assets/images/hero_pakistan_ai_students_1792530100438.jpg';
+import heroAidaImage from '../assets/images/hero_aida_academy_1792526770454.jpg';
 
 interface HeroProps {
   onExploreProgrammes: () => void;
@@ -8,6 +10,8 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ onExploreProgrammes, onContactClick }) => {
+  const [activeBanner, setActiveBanner] = useState<'students' | 'academy'>('students');
+  const currentBannerImg = activeBanner === 'students' ? heroStudentsImage : heroAidaImage;
   const learningAreas = [
     { title: 'AI Agents & Employees', icon: Bot, desc: 'Build autonomous digital employees for real operational tasks' },
     { title: 'Website Dev Using AI', icon: Terminal, desc: 'Create fast, responsive business websites using AI coding tools' },
@@ -92,16 +96,31 @@ export const Hero: React.FC<HeroProps> = ({ onExploreProgrammes, onContactClick 
         {/* ENLARGED HERO BANNER: Full available content width with 450–600px desktop height */}
         <div className="mt-10 sm:mt-14 relative w-full max-w-full overflow-hidden">
           <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 shadow-2xl w-full">
-            {/* Main high-resolution photograph featuring Pakistani male and female students */}
+            {/* Main high-resolution photograph: Students in Action or Academy Campus */}
             <img
-              src="/src/assets/images/hero_pakistan_ai_students_1792530100438.jpg"
-              alt="Pakistani male and female students actively learning AI, working on computers, and building autonomous agent solutions at AIDA Digital Academy"
+              key={activeBanner}
+              src={currentBannerImg}
+              alt={activeBanner === 'students' 
+                ? "Pakistani male and female students actively learning AI, working on computers, and building autonomous agent solutions at AIDA Digital Academy"
+                : "AIDA Digital Academy technology workspace and artificial intelligence learning environment in Lahore, Pakistan"
+              }
               referrerPolicy="no-referrer"
               className="w-full max-w-full h-[320px] sm:h-[420px] md:h-[480px] lg:h-[550px] xl:h-[600px] object-cover object-center transform hover:scale-[1.015] transition-transform duration-700"
               onError={(e) => {
-                e.currentTarget.style.display = 'none';
-                const fallback = e.currentTarget.parentElement?.querySelector('.img-fallback');
-                if (fallback) fallback.classList.remove('hidden');
+                const target = e.currentTarget;
+                if (!target.dataset.triedPublic) {
+                  target.dataset.triedPublic = 'true';
+                  target.src = activeBanner === 'students'
+                    ? '/assets/images/hero_pakistan.jpg'
+                    : '/assets/images/hero_aida.jpg';
+                } else if (!target.dataset.triedFallback) {
+                  target.dataset.triedFallback = 'true';
+                  target.src = activeBanner === 'students' ? heroAidaImage : heroStudentsImage;
+                } else {
+                  target.style.display = 'none';
+                  const fallback = target.parentElement?.querySelector('.img-fallback');
+                  if (fallback) fallback.classList.remove('hidden');
+                }
               }}
             />
 
@@ -114,14 +133,39 @@ export const Hero: React.FC<HeroProps> = ({ onExploreProgrammes, onContactClick 
               </p>
             </div>
 
-            {/* Top-right floating indicator */}
-            <div className="absolute top-3 right-3 sm:top-6 sm:right-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/80 text-[11px] sm:text-sm font-bold text-slate-200 shadow-lg">
+            {/* Top-right floating controls & indicator */}
+            <div className="absolute top-3 right-3 sm:top-6 sm:right-6 flex flex-col sm:flex-row items-end sm:items-center gap-2">
+              <div className="inline-flex items-center p-1 rounded-xl bg-slate-950/90 backdrop-blur-md border border-slate-700/80 shadow-lg text-[11px] sm:text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setActiveBanner('students')}
+                  className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                    activeBanner === 'students'
+                      ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40'
+                      : 'text-slate-300 hover:text-white'
+                  }`}
+                >
+                  Students Lab
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveBanner('academy')}
+                  className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                    activeBanner === 'academy'
+                      ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40'
+                      : 'text-slate-300 hover:text-white'
+                  }`}
+                >
+                  Academy Campus
+                </button>
+              </div>
+
+              <div className="hidden md:inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/80 text-[11px] sm:text-sm font-bold text-slate-200 shadow-lg">
                 <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-cyan-400"></span>
                 </span>
-                <span>Live Interactive Digital Workshops</span>
+                <span>Live Workshops</span>
               </div>
             </div>
 

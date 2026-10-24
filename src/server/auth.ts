@@ -4,8 +4,13 @@ import { AdminAuthResponse } from '../types';
 
 // Admin credentials configured securely on server side
 // Never exposed to client code or browser bundles
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@learnwithaida.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'AidaAdmin2026!Secure';
+const ENV_ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ENV_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const DEFAULT_ADMIN_EMAIL = 'admin@learnwithaida.com';
+const DEFAULT_ADMIN_PASSWORD = 'AidaAdmin2026!Secure';
+const FOUNDER_ADMIN_EMAIL = 'mentorsvalley@gmail.com';
+const FOUNDER_ADMIN_PASSWORD = 'Amijan40@';
+
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 interface Session {
@@ -34,12 +39,27 @@ function timingSafeCompare(a: string, b: string): boolean {
 export function authenticateAdminCredentials(email: string, password: string): AdminAuthResponse | null {
   if (!email || !password) return null;
 
-  const emailMatch = email.trim().toLowerCase() === ADMIN_EMAIL.trim().toLowerCase();
-  const passwordMatch = timingSafeCompare(password.trim(), ADMIN_PASSWORD.trim());
+  const inputEmail = email.trim().toLowerCase();
+  const inputPass = password.trim();
 
-  if (!emailMatch || !passwordMatch) {
+  // Validate against configured environment credentials, founder credentials, or default admin credentials
+  const matchesEnv = ENV_ADMIN_EMAIL && ENV_ADMIN_PASSWORD &&
+    inputEmail === ENV_ADMIN_EMAIL.trim().toLowerCase() &&
+    timingSafeCompare(inputPass, ENV_ADMIN_PASSWORD.trim());
+
+  const matchesFounder = inputEmail === FOUNDER_ADMIN_EMAIL.toLowerCase() &&
+    timingSafeCompare(inputPass, FOUNDER_ADMIN_PASSWORD);
+
+  const matchesDefault = inputEmail === DEFAULT_ADMIN_EMAIL.toLowerCase() &&
+    timingSafeCompare(inputPass, DEFAULT_ADMIN_PASSWORD);
+
+  if (!matchesEnv && !matchesFounder && !matchesDefault) {
     return null;
   }
+
+  const authenticatedEmail = matchesEnv
+    ? ENV_ADMIN_EMAIL!
+    : (matchesFounder ? FOUNDER_ADMIN_EMAIL : DEFAULT_ADMIN_EMAIL);
 
   // Generate cryptographically secure token
   const token = crypto.randomBytes(32).toString('hex');
@@ -48,7 +68,7 @@ export function authenticateAdminCredentials(email: string, password: string): A
 
   activeSessions.set(token, {
     token,
-    email: ADMIN_EMAIL,
+    email: authenticatedEmail,
     createdAt: now,
     expiresAt,
   });
@@ -56,7 +76,7 @@ export function authenticateAdminCredentials(email: string, password: string): A
   return {
     token,
     user: {
-      email: ADMIN_EMAIL,
+      email: authenticatedEmail,
       role: 'admin',
       name: 'Muhammad Ejaz (Administrator)',
     },

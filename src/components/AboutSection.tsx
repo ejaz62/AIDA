@@ -2,6 +2,8 @@ import React from 'react';
 import { FOUNDER_DATA } from '../data/academyData';
 import { Target, ShieldCheck, Wrench, Compass, Mail, Phone, MapPin, Globe } from 'lucide-react';
 import founderImage from '../assets/images/founder_muhammad_ejaz.jpeg';
+import workshopLabImage from '../assets/images/workshop_pakistan_ai_lab_1792530100390.jpg';
+import aidaLearningWorkspaceImage from '../assets/images/aida_learning_workspace_1792526770995.jpg';
 
 interface AboutSectionProps {
   onContactClick: () => void;
@@ -211,36 +213,96 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onContactClick }) =>
             </span>
           </div>
 
-          <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 shadow-2xl w-full max-w-full">
-            {/* Enlarged realistic photograph featuring Pakistani male and female students */}
-            <img
-              src="/src/assets/images/workshop_pakistan_ai_lab_1792530100390.jpg"
-              alt="Pakistani male and female students participating naturally in AI training, digital workshops, classroom discussions, and practical computer-based learning at AIDA Digital Academy"
-              referrerPolicy="no-referrer"
-              className="w-full max-w-full h-[320px] sm:h-[440px] md:h-[500px] lg:h-[560px] xl:h-[600px] object-cover object-center transform hover:scale-[1.01] transition-transform duration-700"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-
-            {/* Bottom informative caption bar */}
-            <div className="p-4 sm:p-7 lg:p-8 bg-slate-950/95 border-t border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 min-w-0">
-              <div className="min-w-0">
-                <h4 className="text-base sm:text-xl font-bold text-white break-words">
-                  Modern Pakistani Educational Environment
-                </h4>
-                <p className="mt-1 text-xs sm:text-base text-slate-300 font-normal max-w-3xl break-words">
-                  Pakistani male and female students working together in contemporary, welcoming digital workshops—collaborating on AI agent workflows, software development, code execution, and real client problem-solving.
-                </p>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+            {/* Primary: Workshop Pakistan Collaborative Lab (7 cols) */}
+            <div className="lg:col-span-7 relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 shadow-2xl flex flex-col justify-between">
+              <div className="relative overflow-hidden">
+                <img
+                  src={workshopLabImage}
+                  alt="Pakistani male and female students participating naturally in AI training, digital workshops, classroom discussions, and practical computer-based learning at AIDA Digital Academy"
+                  referrerPolicy="no-referrer"
+                  className="w-full max-w-full h-[280px] sm:h-[380px] md:h-[420px] object-cover object-center transform hover:scale-[1.015] transition-transform duration-700"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.dataset.triedPublic) {
+                      target.dataset.triedPublic = 'true';
+                      target.src = '/assets/images/workshop_pakistan.jpg';
+                    } else {
+                      target.style.display = 'none';
+                    }
+                  }}
+                />
+                <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
+                  <span className="px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/80 text-[11px] sm:text-xs font-bold text-cyan-300 shadow-md">
+                    Lahore Collaborative AI Lab
+                  </span>
+                </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
-                <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-cyan-950/60 border border-cyan-800/50 text-cyan-300 text-xs sm:text-sm font-bold">
-                  Hands-On Computer Lab
-                </span>
-                <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-xs sm:text-sm font-bold">
-                  Inclusive & Welcoming
-                </span>
+              {/* Bottom informative caption bar */}
+              <div className="p-4 sm:p-6 bg-slate-950/95 border-t border-slate-800 flex flex-col justify-between gap-3 min-w-0 flex-1">
+                <div className="min-w-0">
+                  <h4 className="text-base sm:text-lg font-bold text-white break-words">
+                    Interactive Pakistani Educational Environment
+                  </h4>
+                  <p className="mt-1 text-xs sm:text-sm text-slate-300 font-normal leading-relaxed break-words">
+                    Male and female students collaborate in welcoming digital workshops—working on live agent flows, client projects, and terminal automation.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-3 py-1 rounded-lg bg-cyan-950/60 border border-cyan-800/50 text-cyan-300 text-xs font-bold">
+                    Hands-On Training
+                  </span>
+                  <span className="px-3 py-1 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs font-bold">
+                    Student Discussions
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Secondary: AIDA Learning Workspace & Tech Station (5 cols) */}
+            <div className="lg:col-span-5 relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 shadow-2xl flex flex-col justify-between">
+              <div className="relative overflow-hidden">
+                <img
+                  src={aidaLearningWorkspaceImage}
+                  alt="AIDA Learning Workspace with modern computer monitors, code editors, and artificial intelligence developer workstation"
+                  referrerPolicy="no-referrer"
+                  className="w-full max-w-full h-[280px] sm:h-[380px] md:h-[420px] object-cover object-center transform hover:scale-[1.015] transition-transform duration-700"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.dataset.triedPublic) {
+                      target.dataset.triedPublic = 'true';
+                      target.src = '/assets/images/aida_learning_workspace.jpg';
+                    } else {
+                      target.style.display = 'none';
+                    }
+                  }}
+                />
+                <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
+                  <span className="px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/80 text-[11px] sm:text-xs font-bold text-cyan-300 shadow-md">
+                    Developer Workstations
+                  </span>
+                </div>
+              </div>
+
+              {/* Bottom informative caption bar */}
+              <div className="p-4 sm:p-6 bg-slate-950/95 border-t border-slate-800 flex flex-col justify-between gap-3 min-w-0 flex-1">
+                <div className="min-w-0">
+                  <h4 className="text-base sm:text-lg font-bold text-white break-words">
+                    High-Performance Coding Workspace
+                  </h4>
+                  <p className="mt-1 text-xs sm:text-sm text-slate-300 font-normal leading-relaxed break-words">
+                    Dedicated dual-screen developer bays optimized for building Model Context Protocol servers, agent evaluation, and full-stack software builds.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-3 py-1 rounded-lg bg-cyan-950/60 border border-cyan-800/50 text-cyan-300 text-xs font-bold">
+                    Terminal & Agent Rigs
+                  </span>
+                  <span className="px-3 py-1 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs font-bold">
+                    Clean Hardware Setup
+                  </span>
+                </div>
               </div>
             </div>
           </div>
