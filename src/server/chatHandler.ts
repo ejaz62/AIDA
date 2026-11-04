@@ -7,6 +7,49 @@ interface ChatHistoryItem {
   text: string;
 }
 
+/**
+ * Extracts and sanitizes error details for serverless logs without exposing secrets.
+ */
+function extractErrorDiagnostics(err: any, modelAttempted: string) {
+  const status =
+    err?.status ??
+    err?.statusCode ??
+    err?.error?.code ??
+    (err?.response && err.response.status) ??
+    'N/A';
+
+  const name = err?.name || (err?.constructor && err.constructor.name) || 'Error';
+
+  let rawMessage = err?.message || (typeof err === 'string' ? err : '');
+  let cleanMessage = '';
+
+  // If error message is a serialized JSON object from Google API, parse and extract the core message
+  if (typeof rawMessage === 'string' && rawMessage.trim().startsWith('{')) {
+    try {
+      const parsed = JSON.parse(rawMessage);
+      if (parsed?.error?.message) {
+        cleanMessage = parsed.error.message;
+      } else if (parsed?.message) {
+        cleanMessage = parsed.message;
+      }
+    } catch {
+      // Use raw message if parsing fails
+    }
+  }
+
+  const finalMessage = cleanMessage || rawMessage || (err ? String(err) : 'Unknown error');
+
+  // Redact any Google API key patterns (e.g. AIzaSy...) to guarantee secret safety in logs
+  const sanitizedMessage = finalMessage.replace(/AIza[0-9A-Za-z_-]{35}/g, '[REDACTED_API_KEY]');
+
+  return {
+    status,
+    name,
+    model: modelAttempted,
+    message: sanitizedMessage,
+  };
+}
+
 export async function chatHandler(req: Request, res: Response) {
   // Input validation
   const { message, history } = req.body || {};
@@ -24,16 +67,20 @@ export async function chatHandler(req: Request, res: Response) {
   }
 
   // Read API key exclusively from process.env.GEMINI_API_KEY
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey.trim() === '' || apiKey === 'MY_GEMINI_API_KEY') {
+  const rawApiKey = process.env.GEMINI_API_KEY;
+  if (!rawApiKey || rawApiKey.trim() === '' || rawApiKey.trim() === 'MY_GEMINI_API_KEY') {
+    console.error('[AIDA Chat] GEMINI_API_KEY is not configured or is a placeholder in process.env');
     return res.status(503).json({
       error:
         'The AIDA AI Assistant is currently offline because the server Gemini API key is not configured. Please contact the administrator or reach out via WhatsApp at +92 322 7204898 or email mentorsvalley@gmail.com.',
     });
   }
 
+  // Clean the API key: trim whitespace and remove accidental enclosing quotes from Netlify env input
+  const apiKey = rawApiKey.trim().replace(/^["']+|["']+$/g, '').trim();
+
   try {
-    const ai = new GoogleGenAI({ apiKey: apiKey.trim() });
+    const ai = new GoogleGenAI({ apiKey });
 
     // Build contents array with sanitized conversation history (max 20 turns)
     const contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }> = [];
@@ -60,29 +107,30 @@ export async function chatHandler(req: Request, res: Response) {
       parts: [{ text: message.trim() }],
     });
 
-    const primaryModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+    // Model candidates:
+    // 1. Explicit environment variable override if specified (GEMINI_MODEL)
+    // 2. gemini-3.8-flash (official supported Gemini 3 Flash model)
+    // 3. gemini-flash-latest (dynamic alias)
+    // 4. gemini-2.5-flash (legacy fallback)
+    const candidateModels = Array.from(
+      new Set(
+        [
+          process.env.GEMINI_MODEL?.trim(),
+          'gemini-3.8-flash',
+          'gemini-flash-latest',
+          'gemini-2.5-flash',
+        ].filter(Boolean) as string[]
+      )
+    );
 
-    let response;
-    try {
-      response = await ai.models.generateContent({
-        model: primaryModel,
-        contents,
-        config: {
-          systemInstruction: AIDA_SYSTEM_INSTRUCTION,
-          temperature: 0.3,
-          maxOutputTokens: 1000,
-        },
-      });
-    } catch (modelErr: any) {
-      // If primary model fails with 404 or unsupported model error, attempt fallback to gemini-2.0-flash
-      const isModelNotFound =
-        modelErr?.status === 404 ||
-        (modelErr?.message && /not found|unsupported|does not exist/i.test(modelErr.message));
+    let response: any = null;
+    let successfulModel = '';
 
-      if (isModelNotFound && primaryModel !== 'gemini-2.0-flash') {
-        console.warn(`[AIDA Chat] Primary model ${primaryModel} failed; falling back to gemini-2.0-flash`);
+    for (let i = 0; i < candidateModels.length; i++) {
+      const model = candidateModels[i];
+      try {
         response = await ai.models.generateContent({
-          model: 'gemini-2.0-flash',
+          model,
           contents,
           config: {
             systemInstruction: AIDA_SYSTEM_INSTRUCTION,
@@ -90,20 +138,44 @@ export async function chatHandler(req: Request, res: Response) {
             maxOutputTokens: 1000,
           },
         });
-      } else {
-        throw modelErr;
+        successfulModel = model;
+        break; // Successfully generated content
+      } catch (err: any) {
+        const diag = extractErrorDiagnostics(err, model);
+
+        // Check if the error indicates model availability or retirement (404 or 400 unsupported model)
+        const isModelUnsupported =
+          diag.status === 404 ||
+          (typeof diag.message === 'string' &&
+            /not found|unsupported|does not exist|not supported|is shut down/i.test(diag.message));
+
+        if (isModelUnsupported && i < candidateModels.length - 1) {
+          console.warn(
+            `[AIDA Chat] Model '${model}' unsupported (Status ${diag.status}: ${diag.message}). Trying fallback '${candidateModels[i + 1]}'...`
+          );
+          continue;
+        }
+
+        // Re-throw if non-model error (e.g. invalid key 400, quota 429, permission 403) or no more candidates
+        throw err;
       }
     }
 
-    const replyText = response.text || '';
+    const replyText = response?.text || '';
 
     return res.json({
       reply: replyText.trim() || 'Welcome to AIDA! How can I assist you with our practical AI courses today?',
       role: 'model',
+      modelUsed: successfulModel,
     });
   } catch (err: any) {
-    // Log safely without exposing the API key
-    console.error('[AIDA Chat] Error generating response:', err?.message || 'Unknown error');
+    const diag = extractErrorDiagnostics(err, process.env.GEMINI_MODEL || 'gemini-3.8-flash');
+
+    // Single-line and structured log to ensure Netlify Functions dashboard captures full diagnostic info
+    console.error(
+      `[AIDA Chat] Error generating response: Status ${diag.status} (${diag.name}) on model '${diag.model}' — ${diag.message}`
+    );
+    console.error('[AIDA Chat] Diagnostic payload:', JSON.stringify(diag));
 
     return res.status(500).json({
       error:
