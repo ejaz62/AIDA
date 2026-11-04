@@ -19,6 +19,7 @@ import { CredentialModal } from './components/CredentialModal';
 import { FutureArchitectureModal } from './components/FutureArchitectureModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { AdminLoginModal } from './components/admin/AdminLoginModal';
+import { FloatingChatAssistant } from './components/FloatingChatAssistant';
 import { verifyAdminSession, getStoredAdminToken } from './services/courseApi';
 import { Course, ClaudeCredential } from './types';
 
@@ -164,6 +165,9 @@ export default function App() {
         onExploreProgrammes={() => scrollToSection('what-you-will-learn')}
         onOpenAdmin={handleAdminTrigger}
       />
+
+      {/* Floating AIDA AI Assistant (Visible on all public pages) */}
+      <FloatingChatAssistant />
 
       {/* Modals */}
       <CourseModal

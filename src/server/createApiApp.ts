@@ -16,6 +16,7 @@ import {
   revokeSessionToken,
   requireAdminAuth,
 } from './auth';
+import { chatHandler } from './chatHandler';
 
 export function createApiApp() {
   const app = express();
@@ -38,6 +39,9 @@ export function createApiApp() {
       timestamp: new Date().toISOString(),
     });
   });
+
+  // AIDA AI Assistant Chat Endpoint
+  router.post('/chat', chatHandler);
 
   // Get published courses for public website
   router.get('/courses', (req: Request, res: Response) => {
