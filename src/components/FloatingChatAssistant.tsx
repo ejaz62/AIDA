@@ -1,32 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  MessageSquare,
   X,
   Send,
   RotateCcw,
-  Sparkles,
-  Bot,
   User,
   ShieldCheck,
-  AlertCircle,
   Loader2,
 } from 'lucide-react';
 import { sendChatMessage, ChatMessage } from '../services/chatApi';
+import robotAvatarImage from '../assets/robot_avatar.jpg';
 
 const INITIAL_MESSAGE: ChatMessage = {
   id: 'welcome-0',
   role: 'assistant',
-  text: 'Hello & Welcome to **AIDA** (Artificial Intelligence Digital Academy)! 👋\n\nI am your AI Assistant. I can answer questions about our **10-day practical AI course**, fees, refund policy, and planned learning areas in **English**, **Urdu (اردو)**, or **Roman Urdu**.\n\nHow can I help you today?',
+  text: 'Hello! I am your AIDA AI Assistant. How can I help you today?',
   timestamp: Date.now(),
 };
-
-const SUGGESTED_QUESTIONS = [
-  'What is the course fee and duration?',
-  'Do I need prior coding or technical experience?',
-  'What is the refund policy?',
-  'What are the planned learning areas?',
-  'How do I contact Muhammad Ejaz / AIDA?',
-];
 
 export const FloatingChatAssistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -77,7 +66,7 @@ export const FloatingChatAssistant: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Pass the previous history (excluding the new user message, which sendChatMessage appends)
+      // Dynamically generate response via server-side Gemini API (/api/chat)
       const assistantReply = await sendChatMessage(textToSend, messages);
 
       const assistantMessage: ChatMessage = {
@@ -131,11 +120,10 @@ export const FloatingChatAssistant: React.FC = () => {
     }, 100);
   };
 
-  // Helper to format text with basic markdown (bold, lists, linebreaks)
+  // Helper to format text with clean formatting (bold, lists, linebreaks)
   const renderFormattedText = (content: string) => {
     const lines = content.split('\n');
     return lines.map((line, lineIdx) => {
-      // Parse **bold** tags
       const parts = line.split(/(\*\*[^*]+\*\*)/g);
       const parsedLine = parts.map((part, partIdx) => {
         if (part.startsWith('**') && part.endsWith('**')) {
@@ -148,7 +136,6 @@ export const FloatingChatAssistant: React.FC = () => {
         return part;
       });
 
-      // Check if bullet point
       const isBullet = line.trim().startsWith('- ') || line.trim().startsWith('• ');
       if (isBullet) {
         return (
@@ -173,42 +160,65 @@ export const FloatingChatAssistant: React.FC = () => {
 
   return (
     <>
-      {/* Floating Toggle Button */}
-      <div className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40">
+      {/* Floating Assistant Launcher - Positioned in top-right corner below header & navigation */}
+      <div className="fixed top-24 right-4 sm:right-6 z-40">
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
             aria-label="Open AIDA AI Assistant"
-            className="group relative flex items-center gap-3 rounded-full bg-gradient-to-r from-cyan-600 via-cyan-500 to-blue-600 p-3.5 sm:p-4 text-white shadow-xl shadow-cyan-900/40 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-950 cursor-pointer"
+            className="group relative flex items-center gap-3 rounded-full bg-slate-900/95 border border-cyan-500/40 p-2 sm:p-2.5 text-white shadow-xl shadow-cyan-950/60 transition-all duration-300 hover:scale-105 hover:border-cyan-400 hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-950 cursor-pointer backdrop-blur-md"
           >
-            <div className="relative">
-              <Bot className="h-6 w-6 sm:h-7 sm:w-7 transition-transform group-hover:rotate-6" />
+            {/* Professional Futuristic Robotic AI Avatar */}
+            <div className="relative flex items-center justify-center">
+              <img
+                src={robotAvatarImage}
+                alt="AIDA Robotic AI Avatar"
+                className="h-10 w-10 sm:h-11 sm:w-11 rounded-full object-cover ring-2 ring-cyan-400 shadow-md shadow-cyan-500/40 transition-transform duration-300 group-hover:scale-105"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/assets/images/robot_avatar.jpg';
+                }}
+              />
               {/* Online pulse indicator */}
-              <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
+              <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-slate-950"></span>
+                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-slate-950"></span>
               </span>
             </div>
 
-            <span className="hidden sm:inline-block pr-1 font-bold text-sm tracking-wide text-white">
-              AIDA AI Assistant
-            </span>
+            <div className="hidden sm:flex flex-col text-left pr-2">
+              <span className="text-[13px] font-bold text-white tracking-wide leading-tight group-hover:text-cyan-300 transition-colors">
+                AIDA AI
+              </span>
+              <span className="text-[10px] text-cyan-400 font-medium leading-tight">
+                Online
+              </span>
+            </div>
           </button>
         )}
       </div>
 
-      {/* Floating Chat Modal / Card */}
+      {/* Floating Chat Window - Positioned in top-right corner, does not cover header */}
       {isOpen && (
         <div
           role="dialog"
           aria-label="AIDA AI Assistant Window"
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col w-[calc(100vw-2rem)] sm:w-[420px] h-[580px] max-h-[88vh] rounded-2xl border border-cyan-500/30 bg-slate-950/95 backdrop-blur-xl shadow-2xl shadow-cyan-950/60 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+          className="fixed top-24 right-3 sm:right-6 z-50 flex flex-col w-[calc(100vw-1.5rem)] sm:w-[420px] h-[580px] max-h-[calc(100vh-7rem)] rounded-2xl border border-cyan-500/40 bg-slate-950/98 backdrop-blur-2xl shadow-2xl shadow-cyan-950/80 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900/80 px-4 py-3.5">
+          <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900/90 px-4 py-3">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-500/40 bg-cyan-950/70 text-cyan-400 shadow-inner">
-                <Bot className="h-5 w-5" />
+              <div className="relative shrink-0">
+                <img
+                  src={robotAvatarImage}
+                  alt="AIDA AI Assistant"
+                  className="h-10 w-10 rounded-xl object-cover ring-1 ring-cyan-400/60 shadow-inner"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/assets/images/robot_avatar.jpg';
+                  }}
+                />
+                <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
+                  <span className="inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border-2 border-slate-900"></span>
+                </span>
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
@@ -261,9 +271,14 @@ export const FloatingChatAssistant: React.FC = () => {
                   }`}
                 >
                   {!isUser && (
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-cyan-500/30 bg-cyan-950/60 text-cyan-400 mt-0.5">
-                      <Sparkles className="h-3.5 w-3.5" />
-                    </div>
+                    <img
+                      src={robotAvatarImage}
+                      alt="AI"
+                      className="h-7 w-7 shrink-0 rounded-lg object-cover ring-1 ring-cyan-400/50 mt-0.5"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/assets/images/robot_avatar.jpg';
+                      }}
+                    />
                   )}
 
                   <div
@@ -287,12 +302,17 @@ export const FloatingChatAssistant: React.FC = () => {
               );
             })}
 
-            {/* Loading Indicator */}
+            {/* Loading Indicator with Robot Avatar */}
             {isLoading && (
               <div className="flex items-start gap-2.5 justify-start">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-cyan-500/30 bg-cyan-950/60 text-cyan-400 mt-0.5">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                </div>
+                <img
+                  src={robotAvatarImage}
+                  alt="AI Thinking"
+                  className="h-7 w-7 shrink-0 rounded-lg object-cover ring-1 ring-cyan-400/50 mt-0.5 animate-pulse"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/assets/images/robot_avatar.jpg';
+                  }}
+                />
                 <div className="rounded-2xl rounded-tl-xs border border-slate-800/90 bg-slate-900/90 px-4 py-2.5 text-slate-300">
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs text-cyan-400 font-medium">AIDA Assistant is thinking</span>
@@ -302,26 +322,6 @@ export const FloatingChatAssistant: React.FC = () => {
                       <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-bounce"></span>
                     </span>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* Quick Prompt Chips (Shown when only initial message exists) */}
-            {messages.length === 1 && !isLoading && (
-              <div className="pt-2 space-y-1.5">
-                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-1">
-                  Frequently Asked Questions
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {SUGGESTED_QUESTIONS.map((question, qIdx) => (
-                    <button
-                      key={qIdx}
-                      onClick={() => handleSend(question)}
-                      className="text-left text-xs bg-slate-900/80 hover:bg-slate-800 text-cyan-300 hover:text-cyan-200 border border-slate-800 hover:border-cyan-500/40 rounded-xl px-2.5 py-1.5 transition-colors cursor-pointer"
-                    >
-                      {question}
-                    </button>
-                  ))}
                 </div>
               </div>
             )}
